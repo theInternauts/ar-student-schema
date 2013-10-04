@@ -3,6 +3,7 @@ require 'rspec/core/rake_task'
 require_relative 'db/config'
 require_relative 'lib/students_importer'
 require_relative 'lib/teachers_importer'
+require_relative 'lib/generator'
 
 
 desc "create the database"
@@ -29,6 +30,21 @@ task "db:populate" do
   TeachersImporter.generate(9)
   StudentsImporter.import
 end
+
+desc "populate the test database with sample data by distributing the students and teachers in a JOIN table "
+task "db:populate-distribute" do
+  Generator.populate(25)
+  Generator.distribute(25)
+end
+
+desc "drop, create, migrate, populate, and distribute the test database with sample data"
+task "db:boom" do
+  %x( rake db:drop )
+  %x( rake db:create )
+  %x( rake db:migrate )
+  %x( rake db:populate-distribute )
+end
+
 
 desc 'Retrieves the current schema version number'
 task "db:version" do
